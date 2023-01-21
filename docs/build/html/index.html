@@ -1,0 +1,312 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Impasse Game Engine &#8212; Impasse  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="impasse-game-engine">
+<h1>Impasse Game Engine<a class="headerlink" href="#impasse-game-engine" title="Permalink to this heading">¶</a></h1>
+<p>This is a documentation of the game engine implementation of Impasse.
+It has a pretty Unicode-based UI that run on terminal. After choosing
+the preferred game mode, the game starts and the player is asked to
+enter the move index, based on the list of legal moves.</p>
+<p><em>Author</em>: Foti Kerkeshi</p>
+<p><em>Github</em>: [<a class="reference external" href="https://github.com/f0ti/maastricht_AI/tree/master/isg/impasse](https://github.com/f0ti/maastricht_AI/tree/master/isg/impasse">https://github.com/f0ti/maastricht_AI/tree/master/isg/impasse](https://github.com/f0ti/maastricht_AI/tree/master/isg/impasse</a>)</p>
+<img alt="impasse.png" src="impasse.png" />
+</section>
+<section id="design">
+<h1>Design<a class="headerlink" href="#design" title="Permalink to this heading">¶</a></h1>
+</section>
+<section id="color">
+<h1>Color<a class="headerlink" href="#color" title="Permalink to this heading">¶</a></h1>
+<p><em>color</em> is a boolean data type, either True for the White player or False for the Black player</p>
+</section>
+<section id="piece">
+<h1>Piece<a class="headerlink" href="#piece" title="Permalink to this heading">¶</a></h1>
+<dl>
+<dt><em>PieceType</em></dt><dd><p>piece type is an integer data type, 1 for the single pieces,
+2 for the double (stacked) pieces</p>
+</dd>
+<dt><em>PieceSymbols</em>, <em>PieceNames</em></dt><dd><p>since the engine is a console app, the peice symbols are represented
+by the “⛀”, “⛁” and “⛂”, “⛃” UNICODE characters respectively for the
+black and white and black pieces for each of the piece types</p>
+<p>(0 index of the list is skipped so to ease the element access using the
+PieceType (int) as indices)</p>
+</dd>
+</dl>
+</section>
+<section id="square">
+<h1>Square<a class="headerlink" href="#square" title="Permalink to this heading">¶</a></h1>
+<blockquote>
+<div><p>square is an int data type for each of the 64 squares, indices order is
+from left to right, with the bottom left square as index 0 and top right
+square as index 63</p>
+<p>[Bitboard representation - ChessProgramming.org](<a class="reference external" href="https://www.chessprogramming.org/File:BBUniverse.jpg">https://www.chessprogramming.org/File:BBUniverse.jpg</a>)</p>
+</div></blockquote>
+</section>
+<section id="bitboard">
+<h1>Bitboard<a class="headerlink" href="#bitboard" title="Permalink to this heading">¶</a></h1>
+<blockquote>
+<div><p>one bitboard is an int 64-bit data type, in binary it represents in ones
+and zeros the occupied and free squares in the board (piece centric)
+there are needed only 4 bitboards (integers) to keep the state of the
+board at any time</p>
+<ul class="simple">
+<li><p>the black squares bitboard</p></li>
+<li><p>the white squares bitboard</p></li>
+<li><p>the single squares bitboard</p></li>
+<li><p>the double squares bitboard</p></li>
+</ul>
+<p>bitwise conjuction (AND) of the above represents the board state</p>
+<p>[+] <em>Advantages</em></p>
+<ul class="simple">
+<li><p>very very fast move generation</p></li>
+<li><p>memory efficient</p></li>
+</ul>
+<p>[-] <em>Challenges</em></p>
+<ul class="simple">
+<li><p>complicated moves need more thought and sometimes are hard to generate with bitwise operators</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="id1">
+<h1>Piece<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h1>
+<blockquote>
+<div><p>a piece consists of (piece_type, color)</p>
+<p><em>Attributes</em></p>
+<ul class="simple">
+<li><p><em>piece_type</em> is a constant from the PieceType enum</p></li>
+<li><p><em>color</em> is a boolean, True for white, False for black</p></li>
+</ul>
+<p><em>Methods</em></p>
+<ul class="simple">
+<li><p><em>symbol</em> method returns the unicode symbol of the piece</p></li>
+</ul>
+<p>“⛀”, “⛁” and “⛂”, “⛃”
+- the <em>__repr__</em> and <em>__str__</em> methods return the unicode symbol of the piece</p>
+</div></blockquote>
+</section>
+<section id="move">
+<h1>Move<a class="headerlink" href="#move" title="Permalink to this heading">¶</a></h1>
+<blockquote>
+<div><p>a move consists of (from_square, to_square, transpose, bear_off, impasse, crown)</p>
+<p><em>Attributes</em></p>
+<ul class="simple">
+<li><p><em>from_square</em> and to_square are integers from 0 to 63</p></li>
+<li><p><em>transpose</em> is a boolean, True if the move is a transpose</p></li>
+<li><p><em>bear_off</em> is a boolean, True if the move is a bear off</p></li>
+<li><p><em>impasse</em> is a boolean, True if the move is an impasse</p></li>
+<li><p><em>crown</em> is an integer from 0 to 63, the square where the piece is crowned</p></li>
+</ul>
+<p><em>Methods</em></p>
+<ul class="simple">
+<li><p><em>__repr__</em> and <em>__str__</em> methods return the uci representation of the move</p></li>
+<li><p><em>uci</em> method returns the uci representation of the move
+e.g. “a1b1”, “a1b1[-&gt;&lt;-]”, “a1b1[X][X]”, “a1b1[-&gt;&lt;-][X][X]”</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="boardstate">
+<h1>BoardState<a class="headerlink" href="#boardstate" title="Permalink to this heading">¶</a></h1>
+<blockquote>
+<div><p>a board state consists of (singles, doubles, occupied_w, occupied_b, occupied, turn)</p>
+<p><em>Attributes</em></p>
+<ul class="simple">
+<li><p><em>singles</em> is a bitboard of the singles</p></li>
+<li><p><em>doubles</em> is a bitboard of the doubles</p></li>
+<li><p><em>occupied_w</em> is a bitboard of the white pieces</p></li>
+<li><p><em>occupied_b</em> is a bitboard of the black pieces</p></li>
+<li><p><em>occupied</em> is a bitboard of the occupied squares</p></li>
+<li><p><em>turn</em> is a boolean, True for white, False for black</p></li>
+</ul>
+<p><em>Methods</em></p>
+<ul class="simple">
+<li><p><em>restore</em> method restores the board state to a board, useful for storing the board state before making a move, and restoring it after</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="board">
+<h1>Board<a class="headerlink" href="#board" title="Permalink to this heading">¶</a></h1>
+<blockquote>
+<div><p>a board consists of (move_stack, stack, turn, occupied_co, singles, doubles, occupied)</p>
+<p><em>Attributes</em></p>
+<ul class="simple">
+<li><p><em>move_stack</em> is a list of moves</p></li>
+<li><p><em>stack</em> is a list of board states</p></li>
+<li><p><em>turn</em> is a boolean, True for white, False for black</p></li>
+<li><p><em>occupied_co</em> is a list of bitboards of the white and black pieces</p></li>
+<li><p><em>singles</em> is a bitboard of the singles</p></li>
+<li><p><em>doubles</em> is a bitboard of the doubles</p></li>
+<li><p><em>occupied</em> is a bitboard of the occupied squares</p></li>
+</ul>
+<p><em>Methods</em></p>
+<ul class="simple">
+<li><p><em>legal_moves</em> property returns the legal moves as a list</p></li>
+<li><p><em>push</em> method makes a move on the board and pushes the board state to the stack</p></li>
+<li><p><em>pop</em> method pops the last move from the move stack and restores the board state</p></li>
+<li><p><em>board_state</em> method returns the board state as a BoardState object</p></li>
+<li><p><em>reset_board</em> method resets the board to the starting position</p></li>
+<li><p><em>piece_type_at</em> method returns the piece type at a square</p></li>
+<li><p><em>remove_piece_at</em> method removes a piece from a square</p></li>
+<li><p><em>set_piece_at</em> method sets a piece at a square</p></li>
+<li><p><em>piece_at</em> method returns the piece at a square</p></li>
+<li><p><em>get_backward_moves</em> method returns the backward moves for white doubles and black singles</p></li>
+<li><p><em>get_forward_moves</em> method returns the forward moves for white singles and black doubles</p></li>
+<li><p><em>generate_basic_moves</em> method generates the basic moves (forward, backward, transpose and crown)</p></li>
+<li><p><em>generate_impasse_moves</em> method generates the impasse moves</p></li>
+<li><p><em>generate_crown_moves</em> method generates the crown moves</p></li>
+<li><p><em>peek_for_crown</em> method peeks for a crown move</p></li>
+<li><p><em>crown_available</em> method returns True if a crown move is available</p></li>
+<li><p><em>perform_crown</em> method performs a crown move</p></li>
+<li><p><em>bearoff_available</em> method returns True if a bear off move is available</p></li>
+<li><p><em>transpose_available</em> method returns True if a transpose move is available</p></li>
+<li><p><em>generate_moves</em> method generates all the legal moves (basic and impasse)</p></li>
+<li><p><em>is_game_over</em> method returns True if the game is over</p></li>
+<li><p><em>side_removed_all_pieces</em> method returns True if a side has removed all their pieces</p></li>
+<li><p><em>print_board</em> method prints the board to the console, using the unicode pieces, . for empty squares</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="valuator">
+<h1>Valuator<a class="headerlink" href="#valuator" title="Permalink to this heading">¶</a></h1>
+<p>The valuator is used to evaluate the board state. It is used to determine
+the best move for the AI to make. The valuator is based on the following
+rules:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>more single pieces in the furthest row for white, the better, and likewise
+more single pieces in the nearest  row for black, the better</p></li>
+<li><p>more double pieces in the nearest  row for white, the better, and likewise
+more double pieces in the furthest row for black, the better</p></li>
+<li><p>the more single pieces, the better</p></li>
+<li><p>the less double pieces, the better</p></li>
+<li><p><em>top_highest</em> contains the value map for each square on the board for the pieces</p></li>
+</ul>
+<p>that are valued more if they are in the furthest row
+- <em>top_nearest</em> contains the value map for each square on the board for the pieces
+that are valued more if they are in the nearest row
+- <em>single_value</em> is the value of a single piece
+- <em>double_value</em> is the value of a double piece
+- <em>impasse_value</em> is the value of an impasse move
+- <em>crown_value</em> is the value of a crown move
+- <em>transpose_value</em> is the value of a transpose move
+- <em>singles_disadvantage</em> is the difference in number of single pieces between the
+opponent and the current moving side
+- <em>doubles_disadvantage</em> is the difference in number of double pieces between the
+opponent and the current moving side
+- <em>singles_map_array</em> is the total value for each square on the board in accordance
+to the value map position of the piece
+- <em>doubles_map_array</em> is the total value for each square on the board in accordance
+to the value map position of the piece
+- <em>evaluate</em> is the total value of the board state</p>
+</div></blockquote>
+</section>
+<section id="game">
+<h1>Game<a class="headerlink" href="#game" title="Permalink to this heading">¶</a></h1>
+<p>Runs different <em>game modes</em> and AI search algorithm if needed</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><em>selfplay</em>: plays against itself, moves can also be randomly chosen,</p></li>
+</ul>
+<p>otherwise the best move is chosen
+- <em>human_human</em>: plays against another human, by printing each move to the
+console with its index, and asking for the index of the move to be played
+- <em>human_AI</em>: plays against the AI, by printing each move to the console with
+its index, and asking for the index of the move to be played
+- <em>test_game</em>: debugging environment
+- <em>alphabeta_minimax</em>: runs the alphabeta minimax algorithm
+- <em>explore_leaves</em>: initializes AI search environment with configs and runs the
+minimax algorithm and returns the best moves</p>
+</div></blockquote>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">Impasse</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, f0ti.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.1.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
