@@ -166,23 +166,18 @@ rules:
   - the more single pieces, the better
   - the less double pieces, the better
 
-  - **top_highest** contains the value map for each square on the board for the pieces 
-  that are valued more if they are in the furthest row
-  - **top_nearest** contains the value map for each square on the board for the pieces
-  that are valued more if they are in the nearest row
+
+  - **top_highest** contains the value map for each square on the board for the pieces that are valued more if they are in the furthest row
+  - **top_nearest** contains the value map for each square on the board for the pieces that are valued more if they are in the nearest row
   - **single_value** is the value of a single piece
   - **double_value** is the value of a double piece
   - **impasse_value** is the value of an impasse move
   - **crown_value** is the value of a crown move
   - **transpose_value** is the value of a transpose move
-  - **singles_disadvantage** is the difference in number of single pieces between the
-  opponent and the current moving side
-  - **doubles_disadvantage** is the difference in number of double pieces between the
-  opponent and the current moving side
-  - **singles_map_array** is the total value for each square on the board in accordance
-  to the value map position of the piece
-  - **doubles_map_array** is the total value for each square on the board in accordance
-  to the value map position of the piece
+  - **singles_disadvantage** is the difference in number of single pieces between the opponent and the current moving side
+  - **doubles_disadvantage** is the difference in number of double pieces between the opponent and the current moving side
+  - **singles_map_array** is the total value for each square on the board in accordance to the value map position of the piece
+  - **doubles_map_array** is the total value for each square on the board in accordance to the value map position of the piece
   - **evaluate** is the total value of the board state
 
 Game
