@@ -185,13 +185,9 @@ Game
 
 Runs different **game modes** and AI search algorithm if needed
 
-  - **selfplay**: plays against itself, moves can also be randomly chosen,
-  otherwise the best move is chosen
-  - **human_human**: plays against another human, by printing each move to the
-  console with its index, and asking for the index of the move to be played
-  - **human_AI**: plays against the AI, by printing each move to the console with
-  its index, and asking for the index of the move to be played
+  - **selfplay**: plays against itself, moves can also be randomly chosen, otherwise the best move is chosen
+  - **human_human**: plays against another human, by printing each move to the console with its index, and asking for the index of the move to be played
+  - **human_AI**: plays against the AI, by printing each move to the console with its index, and asking for the index of the move to be played
   - **test_game**: debugging environment
   - **alphabeta_minimax**: runs the alphabeta minimax algorithm
-  - **explore_leaves**: initializes AI search environment with configs and runs the
-  minimax algorithm and returns the best moves
+  - **explore_leaves**: initializes AI search environment with configs and runs the minimax algorithm and returns the best moves
