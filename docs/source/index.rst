@@ -15,21 +15,17 @@ Design
 
 Color
 -----
-**color** is a boolean data type, either True for the White player or False for the Black player
+  **color** is a boolean data type, either True for the White player or False for the Black player
 
 Piece
 -----
-**PieceType**
-  piece type is an integer data type, 1 for the single pieces,
-  2 for the double (stacked) pieces
+  **PieceType**
+    piece type is an integer data type, 1 for the single pieces, 2 for the double (stacked) pieces
 
-**PieceSymbols**, **PieceNames**
-  since the engine is a console app, the peice symbols are represented
-  by the "⛀", "⛁" and "⛂", "⛃" UNICODE characters respectively for the
-  black and white and black pieces for each of the piece types
+  **PieceSymbols**, **PieceNames**
+    since the engine is a console app, the piece symbols are represented by the "⛀", "⛁" and "⛂", "⛃" UNICODE characters respectively for the white and black pieces for each of the piece types
   
-  (0 index of the list is skipped so to ease the element access using the
-  PieceType (int) as indices)
+    (0 index of the list is skipped so to ease the element access using the PieceType (int) as indices)
 
 Square
 ------
@@ -37,7 +33,7 @@ Square
   from left to right, with the bottom left square as index 0 and top right
   square as index 63
 
-  :ref:`Bitboard representation - ChessProgramming.org<https://www.chessprogramming.org/File:BBUniverse.jpg>`
+  `Bitboard representation - ChessProgramming.org <https://www.chessprogramming.org/File:BBUniverse.jpg>`_
 
 Bitboard
 --------
@@ -73,8 +69,7 @@ Piece
 
   **Methods**
 
-  - **symbol** method returns the unicode symbol of the piece
-  "⛀", "⛁" and "⛂", "⛃"
+  - **symbol** method returns the unicode symbol of the piece "⛀", "⛁" and "⛂", "⛃"
   - the **__repr__** and **__str__** methods return the unicode symbol of the piece
 
 Move
@@ -155,9 +150,7 @@ Board
 Valuator
 --------
 
-The valuator is used to evaluate the board state. It is used to determine
-the best move for the AI to make. The valuator is based on the following
-rules:
+  The valuator is used to evaluate the board state. It is used to determine the best move for the AI to make. The valuator is based on the following rules:
 
   - more single pieces in the furthest row for white, the better, and likewise
     more single pieces in the nearest  row for black, the better
@@ -183,7 +176,7 @@ rules:
 Game
 ----
 
-Runs different **game modes** and AI search algorithm if needed
+  Runs different **game modes** and AI search algorithm if needed
 
   - **selfplay**: plays against itself, moves can also be randomly chosen, otherwise the best move is chosen
   - **human_human**: plays against another human, by printing each move to the console with its index, and asking for the index of the move to be played
